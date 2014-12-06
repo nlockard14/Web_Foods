@@ -174,6 +174,22 @@
         });
 			});
 		});
+		
+		$(document).on('click', '.main-menu-item-favorites', function() {
+			this.myItems = localStorage.getItem('favoriteItems');
+			if (!this.myItems) {
+				this.myItems = {};
+				localStorage.setItem('favoriteItems', JSON.stringify(this.myItems));
+			} else {
+				this.myItems = JSON.parse(this.myItems);
+			}
+			var itemName = $(this).parent().parent().find('.main-menu-item-name').text();
+			console.warn(itemName);
+			this.myItems[itemName] = itemName;
+			localStorage.setItem('favoriteItems', JSON.stringify(this.myItems));
+			alert(itemName + " has been saved to your favorites list!");
+		});
+
 	</script>
 	
 <div id="page"></div><!-- This is where the actual body of the "pages" start, inherited to from phase 1 -->
@@ -252,14 +268,15 @@
       var MainMenuItem = React.createClass({
         render: function() {
           return (
-            <div className="main-menu-item" onClick={this.props.setChoice}>
-              <div className="main-menu-item-image-container">
+            <div className="main-menu-item">
+              <div className="main-menu-item-image-container" onClick={this.props.setChoice}>
                 <img className="main-menu-item-image" src={"https://iastate.webfood.com/admin/images/uploaded/" + this.props.data.imageName + ".png"}></img>
               </div>
-              <div className="main-menu-item-data-container">
+              <div className="main-menu-item-data-container" >
                 <h4 className="main-menu-item-name">{this.props.data.description}</h4>
                 <div className="main-menu-item-cost">{"$" + this.props.data.cost}</div>
                 <div className="main-menu-item-description">{this.props.data.longDescription}</div>
+				<div className="main-menu-item-favorites-div"><button id="main-menu-item-favorites" className="btn btn-primary main-menu-item-favorites" role="button">Add to Favorites</button></div>
               </div>
             </div>
           );
@@ -322,7 +339,7 @@
           if(this.state.menu.length > 0) {
             items = this.state.menu[this.state.curMenu].items.map(function(item) {
               return (
-                <MainMenuItem key = {item.id} data={item} setChoice={this.setChoice.bind(this, item.id)} />
+                <MainMenuItem key = {item.id} data={item} setChoice={this.setChoice.bind(this, item.id)}/>
               );
             }.bind(this));
           } else {
@@ -340,7 +357,7 @@
               <div className = "col-sm-9">
                 <h4>Available Menus</h4>
                 <div className="menu-items-container">
-                  {items}
+                  	{items}
                 </div>
               </div>
             </div>
@@ -461,7 +478,7 @@
     });
 
     Backbone.history.start({pushState: false});
-
+	
     </script>
     <!-- saldin test -->
     <!-- hi saldin, its brian -->
