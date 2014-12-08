@@ -259,6 +259,8 @@
 			var itemName = $(this).parent().parent().find('.main-menu-item-name').text();
 			this.myItems[itemName] = itemName;
 			localStorage.setItem('favoriteItems', JSON.stringify(this.myItems));
+			var tr = '<tr><td id="favorites-item-name">'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger favorites-btn" role="button">Delete</button></td></tr>';
+			$('#favorites-table').append(tr);
 			alert(itemName + " has been saved to your favorites list!");
 		});
 		
