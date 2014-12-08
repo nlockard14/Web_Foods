@@ -232,8 +232,45 @@
 			});
 		});
 		
+		var reshowOrder = function(order) {
+			router.navigate(order.url, {trigger: true});
+			order.extras.forEach(function(data) { 
+			$('input[value=\''+data+'\']').prop('checked', true)
+			});
+		};
+		
+		var getOrderData = function() {
+				var url =  window.location.href.substring(window.location.href.lastIndexOf("menu"));
+				var checked = []
+				$(":checked").each(function(index) { checked.push($(this).val()); });
+				var itemName = $(".customize-order-name").text();
+				var order = {	"url": url,
+								"itemName": itemName,
+								"extras": checked,
+								};
+				return order;
+		};
+		
 		$(document).ready(function(){
 			$("#confirmOrder").click(function(e) {
+				var order = getOrderData();
+				var orders = JSON.parse(localStorage.getItem("previousOrders"));
+				if(orders == null)
+					orders = [];
+				orders.push(order);
+				localStorage.setItem("previousOrders", JSON.stringify(orders));
+				localStorage.setItem("mostRecent", JSON.stringify(order));
+				
+				/*
+					// order can be restored with following code, the JSON.parse is necessary
+					// because local storage saves things as strings
+					var order = JSON.parse(localStorage.getItem("mostRecent"));
+					reshowOrder(order);
+					
+					// checking for the order being null (i.e. having never ordered yet)
+					// could be useful
+				*/
+				
 				$.post("/api/create-order", {
 					"location": "<location>",
 					"price": 3.14,
