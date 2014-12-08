@@ -6,6 +6,7 @@
     <script type="text/javascript" src="js/vendor/backbone.js"></script>
     <script type="text/javascript" src="js/vendor/react.js"></script>
     <script type="text/javascript" src="js/vendor/jsx_transformer.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap-formhelpers-datepicker.js"></script>
 
     <script type="text/javascript" src="js/parser.js"></script>
     <script type="text/javascript" src="js/service.js"></script>
@@ -34,12 +35,94 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="#favoritesModal" role="button" data-toggle="modal"> Favorite Items </a></li>
+				<li><a href="#paymentMethodModal" role="button" data-toggle="modal">Payment Method</a></li>
 				<li><a href="#signinModal" role="button" data-toggle="modal"> Sign In </a></li>
 				<li><a href="#registerModal" role="button" data-toggle="modal"> Register </a></li>
 				
 			</ul>
 		</div><!-- container-fluid -->
 	</nav>
+	
+	<div class="container">
+		<!--New Payment Method-->		
+		<div class="modal fade" id="newPaymentMethodModal">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">New Payment Method</h4>
+			  </div>
+			  
+			  <div class="modal-body">
+				<form role="form">
+					<!--Payment Method Nickname-->
+					<div class="form-group">
+						<label for="paymentNickname">Nickname:</label>
+						<input type="text" class="form-control" id="paymentNickname" placeholder="Enter a nickname for this payment method!">
+					</div>
+					<!--Card Type-->
+					<div class="form-group">
+						<label for="cardType">Card Type:</label>
+						<select id="cardType" class="form-control" placeholder="Enter card type">
+							<option value="Visa">Visa</option>
+							<option value="Master Card">Master Card</option>
+							<option value="Discover">Discover</option>
+							<option value="American Express">American Express</option>
+						</select>	
+					</div>
+					<!--Cardholder Name-->
+					<div class="form-group">
+						<label for="cardHolderName">Cardholder Name:</label>
+						<input type="text" class="form-control" id="cardHolderName" placeholder="Enter cardholder name">
+					</div>
+					<!--Card Number-->
+					<div class="form-group">
+						<label for="cardNumber">Card Number:</label>
+						<input type="text" class="form-control" id="cardNumber" placeholder="Enter card number">
+					</div>
+					<!--Expiration Date-->
+					<div class="form-group">
+						<label for="cardExpireDate">Expiration Date:</label>
+						<div class="bfh-datepicker">
+							<input type="text" class="form-control" id="cardExpireDate" placeholder="Enter expiration date">
+						</div>
+					</div>
+				</form>
+			  </div>
+			  
+			  <div class="modal-footer">
+				<button id="savePaymentMethodBtn" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+			  </div>
+			  
+			</div><!-- end modal-content -->
+		  </div><!-- end modal-dialog -->
+		</div><!-- end modal -->
+	</div><!--end container-->
+	
+	<div class="container">
+		<!--My Payment Methods-->		
+		<div class="modal fade" id="paymentMethodModal">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">My Payment Methods</h4>
+			  </div>
+			  
+			  <div class="modal-body">
+			  	<div>
+			  		<button id="newPaymentMethodBtn" type="button" align="center" class="btn btn-primary" data-dismiss="modal">New</button>
+					<!-- Display all payment methods -->
+					</div>
+			  	<div></div>
+			  </div>
+			  
+			</div><!-- end modal-content -->
+		  </div><!-- end modal-dialog -->
+		</div><!-- end modal -->
+	</div><!--end container-->
 
 	<div class="container">
 		<!--Sign In-->		
@@ -70,30 +153,6 @@
 			  
 			  <div class="modal-footer">
 				<button id="signinButton" type="button" class="btn btn-primary" data-dismiss="modal">Sign In</button>
-			  </div>
-			  
-			</div><!-- end modal-content -->
-		  </div><!-- end modal-dialog -->
-		</div><!-- end modal -->
-	</div><!--end container-->
-	<div class="container">
-		<!--Sign In-->		
-		<div class="modal fade" id="favoritesModal">
-		  <div class="modal-dialog">
-			<div class="modal-content">
-			
-			  <div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title">Favorite Items</h4>
-			  </div>
-			  
-			  <div id="favorite-items-body" class="modal-body">
-			  	<table id='favorites-table' style="width:100%;">
-			  	</table>
-			  </div>
-			  
-			  <div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -221,6 +280,17 @@
 				var tr = '<tr><td>'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger" role="button">Delete</button></td></tr>';
 				$('#favorites-table').append(tr);
 			}
+		});
+	</script>
+		
+		$(document).ready(function(){
+			//Payment Method stuff
+			$('#datepicker').bfhdatepicker('toggle');
+			
+			$('#newPaymentMethodBtn').click(function(){
+				$('#paymentMethodModal').modal('hide');
+				$('#newPaymentMethodModal').modal('show');
+			});
 		});
 	</script>
 	
@@ -512,8 +582,5 @@
     Backbone.history.start({pushState: false});
 	
     </script>
-    <!-- saldin test -->
-    <!-- hi saldin, its brian -->
-    <!-- hi guys, its Nicole -->
 </body>
 </html>
