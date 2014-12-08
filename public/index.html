@@ -6,7 +6,7 @@
     <script type="text/javascript" src="js/vendor/backbone.js"></script>
     <script type="text/javascript" src="js/vendor/react.js"></script>
     <script type="text/javascript" src="js/vendor/jsx_transformer.js"></script>
-    <script type="text/javascript" src="js/vendor/bootstrap-formhelpers-datepicker.js"></script>
+    <!-- <script type="text/javascript" src="js/vendor/bootstrap-formhelpers-datepicker.js"></script>-->
 
     <script type="text/javascript" src="js/parser.js"></script>
     <script type="text/javascript" src="js/service.js"></script>
@@ -125,34 +125,23 @@
 	</div><!--end container-->
 
 	<div class="container">
-		<!--Sign In-->		
-		<div class="modal fade" id="signinModal">
+		<div class="modal fade" id="favoritesModal">
 		  <div class="modal-dialog">
 			<div class="modal-content">
 			
 			  <div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title">Sign In</h4>
+				<h4 class="modal-title">Favorite Items</h4>
 			  </div>
 			  
-			  <div class="modal-body">
-				<form role="form">
-					<!--Email input box-->
-					<div class="form-group">
-						<label for="email">User Name:</label>
-						<input type="email" class="form-control" id="username" placeholder="Enter username">
-					</div>
-
-					<!--Password input box-->
-					<div class="form-group">
-						<label for="pwd">Password:</label>
-						<input type="password" class="form-control" id="password" placeholder="Enter password">
-					</div>
-				</form>
+			  <div id="favorite-items-body" class="modal-body">
+			  	<table id='favorites-table' style="width:100%;">
+			  	
+			  	</table>
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="signinButton" type="button" class="btn btn-primary" data-dismiss="modal">Sign In</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -272,25 +261,28 @@
 			localStorage.setItem('favoriteItems', JSON.stringify(this.myItems));
 			alert(itemName + " has been saved to your favorites list!");
 		});
+		
+		$(document).on("click", '.favorites-btn', function() {
+			var tr = $(this).closest('tr');
+			var itemName = $(this).closest('tr').find('#favorites-item-name').text();
+			tr.remove();
+			this.myItems = localStorage.getItem('favoriteItems');
+			if (!this.myItems) {
+				this.myItems = {};
+				localStorage.setItem('favoriteItems', JSON.stringify(this.myItems));
+			} else {
+				this.myItems = JSON.parse(this.myItems);
+			}
+			delete this.myItems[itemName];
+			localStorage.setItem('favoriteItems', JSON.stringify(this.myItems));
+		});
 
 		$(document).ready(function(){
 			var favorites = JSON.parse(localStorage.getItem('favoriteItems'));
 			for (var itemName in favorites) {
-				var obj = '<div>'+itemName+'<div class="pull-right"><button class="btn btn-xs btn-danger" role="button">Delete</button></div></div>';
-				var tr = '<tr><td>'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger" role="button">Delete</button></td></tr>';
+				var tr = '<tr><td id="favorites-item-name">'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger favorites-btn" role="button">Delete</button></td></tr>';
 				$('#favorites-table').append(tr);
 			}
-		});
-	</script>
-		
-		$(document).ready(function(){
-			//Payment Method stuff
-			$('#datepicker').bfhdatepicker('toggle');
-			
-			$('#newPaymentMethodBtn').click(function(){
-				$('#paymentMethodModal').modal('hide');
-				$('#newPaymentMethodModal').modal('show');
-			});
 		});
 	</script>
 	
