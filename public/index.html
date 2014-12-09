@@ -35,14 +35,21 @@
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">WebFood 2.0</a>
 			</div>
-
-			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#favoritesModal" role="button" data-toggle="modal"> Favorite Items </a></li>
-				<li><a href="#paymentMethodModal" role="button" data-toggle="modal" data-target="#paymentMethodModal">Payment Method</a></li>
-				<li><a href="#signinModal" role="button" data-toggle="modal"> Sign In </a></li>
-				<li><a href="#registerModal" role="button" data-toggle="modal"> Register </a></li>
-				
-			</ul>
+			
+			<div id="loggedIn">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#" role="button" data-toggle="modal"> Welcome, <script>document.write(localStorage.getItem("webFoodsUsername"));</script> </a></li>
+					<li><a href="#favoritesModal" role="button" data-toggle="modal"> Favorite Items </a></li>
+					<li><a href="#paymentMethodModal" role="button" data-toggle="modal" data-target="#paymentMethodModal"> Payment Method </a></li>
+					<li><a href="#logoutBtn" role="button" data-toggle="modal" data-target="#logoutBtn"> Logout </a></li>
+				</ul>
+			</div>
+			<div id="loggedOut">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#signinModal" role="button" data-toggle="modal"> Sign In </a></li>
+					<li><a href="#registerModal" role="button" data-toggle="modal"> Register </a></li>
+				</ul>
+			</div>
 		</div><!-- container-fluid -->
 	</nav>
 	
@@ -95,7 +102,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="savePaymentMethodBtn" type="button" class="btn btn-danger" data-dismiss="modal">Save</button>
+				<button id="savePaymentMethodBtn" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -115,14 +122,15 @@
 			  </div>
 			  
 			  <div class="modal-body">
-			  	<div>
-			  		<button id="newPaymentMethodBtn" type="button" class="btn btn-danger" data-dismiss="modal">New</button>
+			  		<button id="newPaymentMethodBtn" type="button" class="btn btn-success" data-dismiss="modal">New</button>
 					<!-- Display all payment methods -->
 					<div id="myPaymentMethods">
 						<table id="myPaymentMethodsTable" style="width: 100%;"></table>
 					</div>
-					</div>
-			  	<div></div>
+			  </div>
+			  
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -147,7 +155,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -183,7 +191,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="signinButton" type="button" class="btn btn-danger" data-dismiss="modal">Sign In</button>
+				<button id="signinButton" type="button" class="btn btn-success" data-dismiss="modal">Sign In</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -225,7 +233,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="registerButton" type="button" class="btn btn-danger" data-dismiss="modal">Register</button>
+				<button id="registerButton" type="button" class="btn btn-success" data-dismiss="modal">Register</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -256,12 +264,29 @@
 	
 	<script><!-- Scripts to send JSON info-->
 		$(document).ready(function() {
+			if(localStorage.getItem('#webFoodsUsername' != null)) {
+				$('#loggedOut').hide();
+				$('#loggedIn').show();
+			} else {
+				$('#loggedIn').hide();
+				$('#loggedOut').show();
+			}
+			
 			$("#signinButton").click(function(e) {
-				$.post("/auth/login", {
+				/* $.post("/auth/login", {
 					username:$('#username').val(),
 					password:$('#password').val()
-				});
+				}); */
+				localStorage.setItem("webFoodsUsername", $('#username').val());
+				$('#loggedOut').hide();
+				$('#loggedIn').show();
 			});
+		});
+		
+		$(document).on('click', 'logoutBtn', function(e) {
+			window.location.reload();
+			/* $('#loggedOut').show();
+			$('#loggedIn').hide(); */
 		});
 		
 		$(document).ready(function() {
@@ -371,8 +396,8 @@
 			$('#datepicker').bfhdatepicker('toggle');
 			
 			var myPayments = JSON.parse(localStorage.getItem('myPaymentMethods'));
-			for (var itemName in myPayments) {
-				var tr = '<tr><td id="favorites-item-name">'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger favorites-btn" role="button">Delete</button></td></tr>';
+			for (var payment in myPayments) {
+				var tr = '<tr><td id="payment-method-name">'+payment+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger payments-btn" role="button">Delete</button></td></tr>';
 				$('#myPaymentMethodsTable').append(tr);
 			}
 		});
@@ -393,8 +418,23 @@
 			var paymentMethod = $('#paymentNickname').val();
 			this.myPayments[paymentMethod] = paymentMethod;
 			localStorage.setItem('myPaymentMethods', JSON.stringify(this.myPayments));
-			var tr = '<tr><td id="favorites-item-name">'+paymentMethod+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger payments-btn" role="button">Delete</button></td></tr>';
+			var tr = '<tr><td id="payment-method-name">'+paymentMethod+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger payments-btn" role="button">Delete</button></td></tr>';
 			$('#myPaymentMethodsTable').append(tr);
+		});
+		
+		$(document).on("click", '.payments-btn', function() {
+			var tr = $(this).closest('tr');
+			var payment = $(this).closest('tr').find('#payment-method-name').text();
+			tr.remove();
+			this.myPayments = localStorage.getItem('myPaymentMethods');
+			if (!this.myPayments) {
+				this.myPayments = {};
+				localStorage.setItem('myPaymentMethods', JSON.stringify(this.myPayments));
+			} else {
+				this.myPayments = JSON.parse(this.myPayments);
+			}
+			delete this.myPayments[payment];
+			localStorage.setItem('myPaymentMethods', JSON.stringify(this.myPayments));
 		});
 	</script>
 	
