@@ -95,7 +95,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="savePaymentMethodBtn" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+				<button id="savePaymentMethodBtn" type="button" class="btn btn-danger" data-dismiss="modal">Save</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -116,8 +116,11 @@
 			  
 			  <div class="modal-body">
 			  	<div>
-			  		<button id="newPaymentMethodBtn" type="button" align="center" class="btn btn-primary" data-dismiss="modal">New</button>
+			  		<button id="newPaymentMethodBtn" type="button" class="btn btn-danger" data-dismiss="modal">New</button>
 					<!-- Display all payment methods -->
+					<div id="myPaymentMethods">
+						<table id="myPaymentMethodsTable" style="width: 100%;"></table>
+					</div>
 					</div>
 			  	<div></div>
 			  </div>
@@ -144,7 +147,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -180,7 +183,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="signinButton" type="button" class="btn btn-primary" data-dismiss="modal">Sign In</button>
+				<button id="signinButton" type="button" class="btn btn-danger" data-dismiss="modal">Sign In</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -222,7 +225,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="registerButton" type="button" class="btn btn-primary" data-dismiss="modal">Register</button>
+				<button id="registerButton" type="button" class="btn btn-danger" data-dismiss="modal">Register</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -242,7 +245,7 @@
 			  </div>
 			  
 			  <div class="modal-footer">
-				<button id="confirmOrder" type="button" class="btn btn-primary" data-dismiss="modal">Confirm Order</button>
+				<button id="confirmOrder" type="button" class="btn btn-success" data-dismiss="modal">Confirm Order</button>
 				<button id="cancelOrder" type="button" class="btn btn-danger" data-dismiss="modal">Cancel Order</button>
 			  </div>
 			  
@@ -364,12 +367,34 @@
 		});
 		
 		$(document).ready(function() {
+			//Payment stuff
 			$('#datepicker').bfhdatepicker('toggle');
+			
+			var myPayments = JSON.parse(localStorage.getItem('myPaymentMethods'));
+			for (var itemName in myPayments) {
+				var tr = '<tr><td id="favorites-item-name">'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger favorites-btn" role="button">Delete</button></td></tr>';
+				$('#myPaymentMethodsTable').append(tr);
+			}
 		});
 		
 		$(document).on('click', '#newPaymentMethodBtn', function(){
 			$('#paymentMethodModal').modal('hide');
 			$('#newPaymentMethodModal').modal('show');
+		});
+		
+		$(document).on('click', '#savePaymentMethodBtn', function(){
+			this.myPayments = localStorage.getItem('myPaymentMethods');
+			if (!this.myPayments) {
+				this.myPayments = {};
+				localStorage.setItem('myPaymentMethods', JSON.stringify(this.myPayments));
+			} else {
+				this.myPayments = JSON.parse(this.myPayments);
+			}
+			var paymentMethod = $('#paymentNickname').val();
+			this.myPayments[paymentMethod] = paymentMethod;
+			localStorage.setItem('myPaymentMethods', JSON.stringify(this.myPayments));
+			var tr = '<tr><td id="favorites-item-name">'+paymentMethod+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger payments-btn" role="button">Delete</button></td></tr>';
+			$('#myPaymentMethodsTable').append(tr);
 		});
 	</script>
 	
@@ -457,7 +482,7 @@
                 <h4 className="main-menu-item-name">{this.props.data.description}</h4>
                 <div className="main-menu-item-cost">{"$" + this.props.data.cost}</div>
                 <div className="main-menu-item-description">{this.props.data.longDescription}</div>
-				<div className="main-menu-item-favorites-div"><button id="main-menu-item-favorites" className="btn btn-primary main-menu-item-favorites" role="button">Add to Favorites</button></div>
+				<div className="main-menu-item-favorites-div"><button id="main-menu-item-favorites" className="btn btn-danger main-menu-item-favorites" role="button">Add to Favorites</button></div>
               </div>
             </div>
           );
