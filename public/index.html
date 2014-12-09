@@ -41,7 +41,7 @@
 					<li><a href="#" role="button" data-toggle="modal"> Welcome, <script>document.write(localStorage.getItem("webFoodsUsername"));</script> </a></li>
 					<li><a href="#favoritesModal" role="button" data-toggle="modal"> Favorite Items </a></li>
 					<li><a href="#paymentMethodModal" role="button" data-toggle="modal" data-target="#paymentMethodModal"> Payment Method </a></li>
-					<li><a href="#logoutBtn" role="button" data-toggle="modal" data-target="#logoutBtn"> Logout </a></li>
+					<li><a href="#" role="button" id="logoutBtn"> Logout </a></li>
 				</ul>
 			</div>
 			<div id="loggedOut">
@@ -283,10 +283,9 @@
 			});
 		});
 		
-		$(document).on('click', 'logoutBtn', function(e) {
-			window.location.reload();
-			/* $('#loggedOut').show();
-			$('#loggedIn').hide(); */
+		$('#logoutBtn').bind('click', function(e) {
+			$('#loggedOut').show();
+			$('#loggedIn').hide();
 		});
 		
 		$(document).ready(function() {
