@@ -6,7 +6,6 @@
     <script type="text/javascript" src="js/vendor/backbone.js"></script>
     <script type="text/javascript" src="js/vendor/react.js"></script>
     <script type="text/javascript" src="js/vendor/jsx_transformer.js"></script>
-    <!-- <script type="text/javascript" src="js/vendor/bootstrap-formhelpers-datepicker.js"></script>-->
 
     <script type="text/javascript" src="js/parser.js"></script>
     <script type="text/javascript" src="js/service.js"></script>
@@ -18,8 +17,12 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap-formhelpers-datepicker.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap-formhelpers-states.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap-formhelpers.min.js"></script>
 
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/bootstrap-formhelpers.min.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
@@ -35,7 +38,7 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="#favoritesModal" role="button" data-toggle="modal"> Favorite Items </a></li>
-				<li><a href="#paymentMethodModal" role="button" data-toggle="modal">Payment Method</a></li>
+				<li><a href="#paymentMethodModal" role="button" data-toggle="modal" data-target="#paymentMethodModal">Payment Method</a></li>
 				<li><a href="#signinModal" role="button" data-toggle="modal"> Sign In </a></li>
 				<li><a href="#registerModal" role="button" data-toggle="modal"> Register </a></li>
 				
@@ -85,7 +88,7 @@
 					<div class="form-group">
 						<label for="cardExpireDate">Expiration Date:</label>
 						<div class="bfh-datepicker">
-							<input type="text" class="form-control" id="cardExpireDate" placeholder="Enter expiration date">
+							<input type="text" class="form-control datepicker" id="cardExpireDate" placeholder="Enter expiration date">
 						</div>
 					</div>
 				</form>
@@ -123,7 +126,7 @@
 		  </div><!-- end modal-dialog -->
 		</div><!-- end modal -->
 	</div><!--end container-->
-
+	
 	<div class="container">
 		<div class="modal fade" id="favoritesModal">
 		  <div class="modal-dialog">
@@ -142,6 +145,42 @@
 			  
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			  </div>
+			  
+			</div><!-- end modal-content -->
+		  </div><!-- end modal-dialog -->
+		</div><!-- end modal -->
+	</div><!--end container-->
+
+	<div class="container">
+		<!--Sign In-->		
+		<div class="modal fade" id="signinModal">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">Sign In</h4>
+			  </div>
+			  
+			  <div class="modal-body">
+				<form role="form">
+					<!--Email input box-->
+					<div class="form-group">
+						<label for="email">User Name:</label>
+						<input type="email" class="form-control" id="username" placeholder="Enter username">
+					</div>
+
+					<!--Password input box-->
+					<div class="form-group">
+						<label for="pwd">Password:</label>
+						<input type="password" class="form-control" id="password" placeholder="Enter password">
+					</div>
+				</form>
+			  </div>
+			  
+			  <div class="modal-footer">
+				<button id="signinButton" type="button" class="btn btn-primary" data-dismiss="modal">Sign In</button>
 			  </div>
 			  
 			</div><!-- end modal-content -->
@@ -300,7 +339,7 @@
 			$('#favorites-table').append(tr);
 			alert(itemName + " has been saved to your favorites list!");
 		});
-		
+
 		$(document).on("click", '.favorites-btn', function() {
 			var tr = $(this).closest('tr');
 			var itemName = $(this).closest('tr').find('#favorites-item-name').text();
@@ -322,6 +361,15 @@
 				var tr = '<tr><td id="favorites-item-name">'+itemName+'</td><td style="text-align:right;"><button class="btn btn-xs btn-danger favorites-btn" role="button">Delete</button></td></tr>';
 				$('#favorites-table').append(tr);
 			}
+		});
+		
+		$(document).ready(function() {
+			$('#datepicker').bfhdatepicker('toggle');
+		});
+		
+		$(document).on('click', '#newPaymentMethodBtn', function(){
+			$('#paymentMethodModal').modal('hide');
+			$('#newPaymentMethodModal').modal('show');
 		});
 	</script>
 	
