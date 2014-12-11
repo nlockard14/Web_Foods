@@ -40,6 +40,7 @@
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="#" role="button" data-toggle="modal"> Welcome, <script>document.write(localStorage.getItem("webFoodsUsername"));</script> </a></li>
 					<li><a href="#favoritesModal" role="button" data-toggle="modal"> Favorite Items </a></li>
+					<li><a href="#previous" role="button" > Previous Orders </a></li>
 					<li><a href="#paymentMethodModal" role="button" data-toggle="modal" data-target="#paymentMethodModal"> Payment Method </a></li>
 					<li><a href="#" role="button" id="logoutBtn"> Logout </a></li>
 				</ul>
@@ -264,7 +265,7 @@
 	
 	<script><!-- Scripts to send JSON info-->
 		$(document).ready(function() {
-			if(localStorage.getItem('#webFoodsUsername' != null)) {
+			if(localStorage.getItem('#webFoodsUsername') != null) {
 				$('#loggedOut').hide();
 				$('#loggedIn').show();
 			} else {
@@ -300,9 +301,9 @@
 		
 		var reshowOrder = function(order) {
 			router.navigate(order.url, {trigger: true});
-			order.extras.forEach(function(data) { 
-			$('input[value=\''+data+'\']').prop('checked', true)
-			});
+			setTimeout(function() {order.extras.forEach(function(data) { 
+				$('input[value=\''+data+'\']').prop('checked', true);
+			});}, 200) ;
 		};
 		
 		var getOrderData = function() {
@@ -310,15 +311,18 @@
 				var checked = []
 				$(":checked").each(function(index) { checked.push($(this).val()); });
 				var itemName = $(".customize-order-name").text();
+				var imageSrc = $(".customize-order-image").prop('src');
 				var order = {	"url": url,
 								"itemName": itemName,
 								"extras": checked,
+								"imageSrc": imageSrc,
 								};
 				return order;
 		};
 		
 		$(document).ready(function(){
 			$("#confirmOrder").click(function(e) {
+				alert('hello');
 				var order = getOrderData();
 				var orders = JSON.parse(localStorage.getItem("previousOrders"));
 				if(orders == null)
@@ -544,6 +548,51 @@
         }
       });
 
+	  var PreviousOrders = React.createClass({
+          render: function() {
+            
+            var items = localStorage.getItem("previousOrders");
+            if(items == null || items == 'null')
+            	items = '[]';
+            items = JSON.parse(items);
+            items = items.map(function(item) {
+            	var itemString = JSON.stringify(item);
+            	var extras = ("Extras: ");
+            	item.extras.forEach(function(extra, index) {
+            		extras += " " +extra;
+            		
+            		extras += ",";
+            	});
+            	
+            	this.click = function(){
+            		if(this.go)
+	            		reshowOrder(item);
+            		this.go = true;
+            	}
+            	this.click.go = false;
+              
+              return (
+              <div className="main-menu-item">
+              <div className="main-menu-item-image-container" onClick={this.click}>
+              <img className="main-menu-item-image" src={item.imageSrc}></img>    
+              </div>
+              <div className="main-menu-item-data-container" >
+                <h4 className="main-menu-item-name">{item.itemName}</h4>
+                <div className="main-menu-item-description">{extras}</div>
+              </div>
+            </div>
+              );});
+            return(
+            <div className = "col-sm-9">
+                <h4>Previous Orders</h4>
+                <div className="menu-items-container">
+                  	{items}
+                </div>
+              </div>
+              );
+        }
+      });
+	  
       var MainMenu = React.createClass({
         getInitialState: function() {
             return {
@@ -616,7 +665,7 @@
           var items = this.props.data.condiments.map(function(item) {
             return (
               <li className="sub-menu-sides-item">
-                <label><input type="checkbox" name="checkbox" value="value" />{" " + item.name} </label>
+                <label><input type="checkbox" name="checkbox" value={item.name} />{" " + item.name} </label>
               </li>
             );
           });
@@ -699,7 +748,8 @@
         "": "locations",
         "menu/:locationId": "menu1",
         "menu/:locationId/:mainSelection": "menu2",
-        "*err": "404"
+		"previous": "previous",
+        "*err": "404",
       },
     });
 
@@ -710,6 +760,7 @@
         "locations": Locations,
         "menu1": MainMenu,
         "menu2": SubMenu,
+		"previous": PreviousOrders,
       };
 
       var Content = pathMapping[action] || Content404;
@@ -723,7 +774,6 @@
     });
 
     Backbone.history.start({pushState: false});
-	
     </script>
 </body>
 </html>
